@@ -1,3 +1,15 @@
+<p align="center">
+  <a href="https://mizara.ai"><img src="assets/logo-banner.svg" width="340" alt="mizara"></a>
+</p>
+
+<p align="center"><a href="https://mizara.ai">mizara.ai</a></p>
+
+<p align="center">
+  <a href="https://github.com/getmizara/mizara-action/actions/workflows/self-test.yml"><img src="https://github.com/getmizara/mizara-action/actions/workflows/self-test.yml/badge.svg" alt="Self-test"></a>
+  <a href="https://github.com/getmizara/mizara-python#cli"><img src="https://img.shields.io/pypi/v/mizara?color=3776ab&label=mizara" alt="mizara"></a>
+  <a href="LICENSE.md"><img src="https://img.shields.io/badge/license-Apache%202.0-blue" alt="License"></a>
+</p>
+
 # Mizara Safety Test
 
 GitHub Action wrapper for [`mizara test`](https://github.com/getmizara/mizara-python#cli) - runs your Mizara
