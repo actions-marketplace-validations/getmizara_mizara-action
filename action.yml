@@ -1,0 +1,62 @@
+name: 'Mizara Safety Test'
+description: 'Runs mizara test against a policy file and reports coverage against six common risk scenarios as a job summary.'
+author: 'Mizara'
+branding:
+  icon: 'shield'
+  color: 'purple'
+
+inputs:
+  policy-path:
+    description: 'Path to the Mizara policy JSON file to test.'
+    required: true
+  mizara-version:
+    description: 'mizara PyPI version to install. Defaults to the latest release.'
+    required: false
+    default: ''
+  python-version:
+    description: 'Python version to use.'
+    required: false
+    default: '3.x'
+
+outputs:
+  result:
+    description: '"pass" if every scenario was protected or default-denied, "fail" if any scenario would be allowed through.'
+    value: ${{ steps.run-test.outputs.result }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install mizara
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.mizara-version }}" ]; then
+          pip install --quiet "mizara==${{ inputs.mizara-version }}"
+        else
+          pip install --quiet mizara
+        fi
+
+    - name: Run mizara test
+      id: run-test
+      shell: bash
+      run: |
+        set +e
+        mizara test "${{ inputs.policy-path }}" --json > "${{ runner.temp }}/mizara-test-result.json"
+        exit_code=$?
+        set -e
+
+        python3 "${{ github.action_path }}/summarize.py" \
+          "${{ runner.temp }}/mizara-test-result.json" \
+          "$GITHUB_STEP_SUMMARY"
+
+        if [ "$exit_code" -eq 0 ]; then
+          echo "result=pass" >> "$GITHUB_OUTPUT"
+        else
+          echo "result=fail" >> "$GITHUB_OUTPUT"
+        fi
+
+        exit $exit_code
